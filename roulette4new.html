@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border: 3px solid black;
+    height: 800px;
+    width: 100%;
+}
+</style>
+<title></title>
+</head>
+<body>
+<div id="container">
+<div id="test"></div>
+<button type="button" id="spin">Spin the Wheel</button>
+<canvas id="field" width="480" height="320" style="border:3px solid red"></canvas>
+<div style="float:right">
+<ol>
+<li>irregular verbs</li>
+<li>prepositions</li>
+<li>vocabulary</li>
+<li>give a response</li>
+<li>past</li>
+<li>present</li>
+<li>future</li>
+<li>word formation</li>
+<li>conditionals</li>
+<li>questions</li>
+</ol>
+</div>
+</div>
+
+
+
+
+<script>
+
+
+var canvas = document.getElementById("field");
+var ctx = canvas.getContext("2d");
+var radius = canvas.height / 2 - 10;
+var increment = Math.PI / 180;
+var n;
+
+var categories = ["irregular verbs", "prepositions", "name that object", "placeholder3", "placeholder4", "placeholder5", "placeholder6", "placeholder7", "placeholder8", "placeholder9"];
+
+var wheelIsSpinning = false;
+document.getElementById("spin").addEventListener('click', function() {
+     wheel.dw = Math.PI / 180;
+     increment = Math.PI / 180;
+     n = (Math.floor(Math.random() * (110 - 5 + 1) ) + 5) / 100;
+     pointer();
+     if (!wheelIsSpinning) {
+        raf = window.requestAnimationFrame(draw);
+        wheelIsSpinning = true;
+    }
+ });
+
+var wheel = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: canvas.height / 2 - 10,
+    numOfSectors: 10,
+    startAngle: 0,
+    endAngle: Math.PI / (this.numOfSectors / 2),
+    letterAngle: -this.startAngle,
+    dw: Math.PI / 180,
+    draw: function() {
+        var i;
+        for (i = 0; i < this.numOfSectors; i++) {
+            this.startAngle += Math.PI / (this.numOfSectors / 2);
+            this.endAngle = this.startAngle + Math.PI / (this.numOfSectors / 2);
+            this.letterAngle += Math.PI / (this.numOfSectors / 2);
+            ctx.beginPath();
+            
+            ctx.moveTo(this.x, this.y);
+            ctx.arc(this.x, this.y, this.radius, this.startAngle, this.endAngle, false);
+
+            ctx.lineTo(this.x, this.y);
+            ctx.fillStyle = "Turquoise";
+            ctx.strokeStyle = "Turquoise";
+            
+            if (i % 2 == false) {ctx.stroke(); ctx.fill();}
+            ctx.font = "10px Arial";
+            ctx.fillStyle = "red";
+            ctx.fillText(i+1, this.x - Math.sin(-this.endAngle-Math.PI/(this.numOfSectors / 2)) * (this.radius * 3 / 4), this.y - Math.cos(-this.endAngle-Math.PI/(this.numOfSectors / 2)) * (this.radius * 3 / 4));
+            }
+            wheelIsSpinning = false;      
+     },
+    lettering: function() {
+        var j;
+        for (j=1; j < this.numOfSectors; j++) {
+            ctx.font = "10px Arial";
+            ctx.fillStyle = "red";
+
+            ctx.fillText(j+1, this.x - Math.sin(-this.endAngle) * (this.radius * 3 / 4), this.y - Math.cos(-this.endAngle) * (this.radius * 3 /4));
+        }
+    }
+ };
+
+wheel.draw();
+
+pointer();
+
+
+
+function pointer() {
+    ctx.beginPath();
+    ctx.fillStyle = "pink";
+    ctx.moveTo(wheel.x - wheel.radius, wheel.y);
+    ctx.lineTo(wheel.x - wheel.radius - 20, wheel.y - 15);
+    ctx.lineTo(wheel.x - wheel.radius - 20, wheel.y + 15);
+    ctx.lineTo(wheel.x - wheel.radius, wheel.y);
+    ctx.fill();
+}
+
+function stopTheWheel(event) {
+    window.cancelAnimationFrame(raf);
+
+}
+
+function draw() {
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+
+    pointer();
+    wheel.draw();
+
+    if (wheel.dw > n) {increment = -increment;}
+    
+    wheel.startAngle += wheel.dw;
+    wheel.letterAngle += wheel.dw;
+    wheel.dw += increment;
+
+    raf = window.requestAnimationFrame(draw);
+    if (wheel.dw < 0.01) {window.cancelAnimationFrame(raf); /*wheelIsSpinning = false;*/}
+}
+
+
+</script>
+</body>
+</html>
